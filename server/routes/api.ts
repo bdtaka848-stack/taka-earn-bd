@@ -208,6 +208,37 @@ router.post('/tasks/:id/complete', (req, res) => {
 });
 
 // ==========================================
+// MATH QUIZ TASKS (সহজ + অংক, ৳৫ প্রতি অংক, দৈনিক ৫০০টি, ১৫s স্পন্সর)
+// ==========================================
+router.get('/tasks/math-status', (req, res) => {
+  const user = getUser(req);
+  const status = db.getMathTaskStatus(user.id);
+  res.json(status);
+});
+
+router.post('/tasks/math-submit', (req, res) => {
+  const user = getUser(req);
+  const { mathAnswer, expectedAnswer, elapsedSeconds } = req.body;
+
+  if (mathAnswer === undefined || expectedAnswer === undefined) {
+    return res.status(400).json({ error: 'অংকের উত্তর প্রদান আবশ্যক।' });
+  }
+
+  const result = db.completeMathTask(
+    user.id,
+    Number(mathAnswer),
+    Number(expectedAnswer),
+    Number(elapsedSeconds || 15)
+  );
+
+  if (!result.success) {
+    return res.status(400).json({ error: result.error });
+  }
+
+  res.json(result);
+});
+
+// ==========================================
 // WATCH VIDEO ADS
 // ==========================================
 router.get('/ads/watch-list', (req, res) => {
@@ -732,8 +763,8 @@ const handleUpdateAdminSettings = (req: any, res: any) => {
   if (body.withdrawal) {
     db.updateSystemSettings(
       {
-        minWithdrawal: Number(body.withdrawal.minAmount) || 500,
-        maxWithdrawal: Number(body.withdrawal.maxAmount) || 50000,
+        minWithdrawal: Number(body.withdrawal.minAmount) || 2000,
+        maxWithdrawal: Number(body.withdrawal.maxAmount) || 20000,
         withdrawalFeePercent: Number(body.withdrawal.feePercent) ?? 2.5,
         usdtExchangeRate: Number(body.withdrawal.usdtExchangeRate) || 122,
       },

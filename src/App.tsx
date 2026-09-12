@@ -79,7 +79,7 @@ export default function App() {
               ৳
             </div>
             <span>
-              &copy; {new Date().getFullYear()} <strong>TakaEarnBD</strong> &middot; Professional Bangladeshi Rewards Ecosystem
+              © {new Date().getFullYear()} <strong>TakaEarnBD</strong> · Professional Bangladeshi Rewards Ecosystem
             </span>
           </div>
 
@@ -88,12 +88,12 @@ export default function App() {
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
               <span>Anti-Fraud 10s Server Gate</span>
             </span>
-            <span>&bull;</span>
+            <span>•</span>
             <span className="flex items-center gap-1">
               <Smartphone className="w-3.5 h-3.5 text-pink-400" />
               <span>bKash & Nagad</span>
             </span>
-            <span>&bull;</span>
+            <span>•</span>
             <span className="flex items-center gap-1">
               <Coins className="w-3.5 h-3.5 text-emerald-400" />
               <span>USDT (TRC20/BEP20)</span>

@@ -158,7 +158,7 @@ export interface SpinResult {
   spunAt: string;
 }
 
-export type AdProvider = 'Adsterra' | 'Social Bar' | 'Popunder' | 'Custom HTML' | 'Video CPM';
+export type AdProvider = 'Adsterra' | 'Social Bar' | 'Popunder' | 'Custom HTML' | 'Video CPM' | 'Adsterra Video CPM';
 export type AdPlacement = 'before_task' | 'watch_ads' | 'dashboard' | 'popunder';
 
 export interface Advertisement {

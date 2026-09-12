@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp, UserView } from '../../context/AppContext.js';
+import { openAdsterraSmartlink } from '../../utils/constants.js';
 import { Flame, CheckCircle2, Tv, Sparkles, Wallet, ArrowDownLeft } from 'lucide-react';
 
 export const MobileNav: React.FC = () => {
@@ -27,8 +28,13 @@ export const MobileNav: React.FC = () => {
           return (
             <button
               key={item.key}
-              onClick={() => setUserView(item.key)}
-              className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-[10px] font-semibold transition-all ${
+              onClick={() => {
+                if (item.key === 'tasks' || item.key === 'watch_ads') {
+                  openAdsterraSmartlink();
+                }
+                setUserView(item.key);
+              }}
+              className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-[10px] font-semibold transition-all cursor-pointer ${
                 isActive
                   ? 'text-emerald-400 bg-emerald-500/15'
                   : 'text-slate-400 hover:text-slate-200'

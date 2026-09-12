@@ -41,7 +41,7 @@ export const ProfileSection: React.FC = () => {
                   ACTIVE
                 </span>
               </div>
-              <p className="text-xs text-slate-400">@{user.username} &bull; {user.email}</p>
+              <p className="text-xs text-slate-400">@{user.username} • {user.email}</p>
               <div className="flex items-center gap-2 mt-2 text-[11px] text-slate-400">
                 <Calendar className="w-3.5 h-3.5 text-slate-500" />
                 <span>Joined {formatDate(user.createdAt)}</span>
@@ -58,7 +58,7 @@ export const ProfileSection: React.FC = () => {
               onClick={() => setUserView('withdraw')}
               className="mt-2 text-xs font-semibold text-emerald-400 hover:text-emerald-300"
             >
-              Withdraw Funds &rarr;
+              Withdraw Funds →
             </button>
           </div>
         </div>

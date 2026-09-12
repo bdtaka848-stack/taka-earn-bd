@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp, UserView } from '../../context/AppContext.js';
 import { formatBdt } from '../../utils/format.js';
+import { openAdsterraSmartlink } from '../../utils/constants.js';
 import {
   Wallet,
   Shield,
@@ -78,8 +79,13 @@ export const Navbar: React.FC = () => {
                   return (
                     <button
                       key={item.key}
-                      onClick={() => setUserView(item.key)}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                      onClick={() => {
+                        if (item.key === 'tasks' || item.key === 'watch_ads') {
+                          openAdsterraSmartlink();
+                        }
+                        setUserView(item.key);
+                      }}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                         isActive
                           ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm'
                           : 'text-slate-300 hover:text-white hover:bg-slate-800/60'

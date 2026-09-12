@@ -35,8 +35,8 @@ export const WithdrawalSection: React.FC = () => {
   const [history, setHistory] = useState<Withdrawal[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
 
-  const minWithdrawal = publicSettings?.minWithdrawal ?? 500;
-  const maxWithdrawal = publicSettings?.maxWithdrawal ?? 50000;
+  const minWithdrawal = publicSettings?.minWithdrawal ?? 2000;
+  const maxWithdrawal = publicSettings?.maxWithdrawal ?? 20000;
   const feePercent = publicSettings?.withdrawalFeePercent ?? 2.5;
   const usdtRate = publicSettings?.usdtExchangeRate ?? 122;
 
@@ -411,7 +411,7 @@ export const WithdrawalSection: React.FC = () => {
                   type="number"
                   step="any"
                   required
-                  placeholder="500.00"
+                  placeholder="2000.00"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl pl-9 pr-4 py-2.5 text-sm text-white font-mono placeholder-slate-500 outline-none transition"
@@ -420,7 +420,7 @@ export const WithdrawalSection: React.FC = () => {
 
               {/* Quick Amount Pills */}
               <div className="flex flex-wrap gap-2 mt-2">
-                {[500, 1000, 2500, 5000, 10000, 50000].map((quick) => (
+                {[2000, 3000, 5000, 10000, 15000, 20000].map((quick) => (
                   <button
                     key={quick}
                     type="button"
@@ -437,7 +437,7 @@ export const WithdrawalSection: React.FC = () => {
               </div>
 
               <div className="mt-2 text-[11px] text-slate-400 flex items-center justify-between">
-                <span>উইথড্র লিমিট: <strong className="text-slate-200">৳{minWithdrawal} &ndash; ৳{maxWithdrawal.toLocaleString()}</strong></span>
+                <span>উইথড্র লিমিট: <strong className="text-slate-200">৳{minWithdrawal} – ৳{maxWithdrawal.toLocaleString()}</strong></span>
                 <span>ফি: {feePercent}%</span>
               </div>
             </div>
@@ -489,25 +489,25 @@ export const WithdrawalSection: React.FC = () => {
             </h4>
             <ul className="space-y-2.5 text-xs text-slate-300 leading-relaxed">
               <li className="flex items-start gap-2">
-                <span className="text-emerald-400 font-bold">&bull;</span>
+                <span className="text-emerald-400 font-bold">•</span>
                 <span>
                   <strong>উইথড্র লিমিট (Withdrawal Limits):</strong> সর্বনিম্ন {formatBdt(minWithdrawal)} BDT থেকে সর্বোচ্চ {formatBdt(maxWithdrawal)} BDT পর্যন্ত।
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-amber-400 font-bold">&bull;</span>
+                <span className="text-amber-400 font-bold">•</span>
                 <span className="text-amber-200">
                   <strong>প্রসেসিং টাইম (Processing Time):</strong> টাকা উইথড্র করার প্রসেসিং টাইম ২৪ ঘণ্টার মধ্যে উইথড্র হয়ে যাবে।
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-400 font-bold">&bull;</span>
+                <span className="text-emerald-400 font-bold">•</span>
                 <span>
                   <strong>Protection Guarantee:</strong> If a request is rejected by administration, the full amount is immediately refunded to your available balance.
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-400 font-bold">&bull;</span>
+                <span className="text-emerald-400 font-bold">•</span>
                 <span>
                   <strong>Account Accuracy:</strong> Double check your bKash or Nagad wallet number before confirming.
                 </span>

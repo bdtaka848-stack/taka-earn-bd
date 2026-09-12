@@ -157,7 +157,7 @@ function getInitialData(): DatabaseSchema {
     Get 80% exclusive discount on fast cloud hosting with global DDoS protection & 99.99% uptime guarantee.
   </p>
   <div class="flex items-center justify-center gap-3">
-    <span class="inline-block px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-xs rounded-xl shadow-lg transition">Explore Deal &rarr;</span>
+    <span class="inline-block px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-xs rounded-xl shadow-lg transition">Explore Deal →</span>
   </div>
 </div>`,
       placement: 'before_task',
@@ -506,7 +506,7 @@ function getInitialData(): DatabaseSchema {
     type: 'fixed', // 'fixed' or 'percentage'
     commissionRate: 10, // 10%
     fixedAmount: 25.00, // ৳25 per active registered referral
-    minWithdrawalForCommission: 500,
+    minWithdrawalForCommission: 2000,
   };
 
   const initialSpinSettings: SpinSettings = {
@@ -538,8 +538,8 @@ function getInitialData(): DatabaseSchema {
     siteName: 'TakaEarnBD Rewards',
     currencySymbol: '৳',
     currencyCode: 'BDT',
-    minWithdrawal: 500.00,
-    maxWithdrawal: 50000.00,
+    minWithdrawal: 2000.00,
+    maxWithdrawal: 20000.00,
     withdrawalFeePercent: 2.5,
     bKashEnabled: true,
     nagadEnabled: true,
@@ -682,8 +682,17 @@ class DatabaseManager {
           systemSettings: {
             ...initial.systemSettings,
             ...(parsed.systemSettings || {}),
-            minWithdrawal: (parsed.systemSettings?.minWithdrawal === 100 ? 500 : parsed.systemSettings?.minWithdrawal) || 500,
-            maxWithdrawal: (parsed.systemSettings?.maxWithdrawal === 15000 || !parsed.systemSettings?.maxWithdrawal ? 50000 : parsed.systemSettings.maxWithdrawal),
+            minWithdrawal:
+              parsed.systemSettings?.minWithdrawal === 100 ||
+              parsed.systemSettings?.minWithdrawal === 500
+                ? 2000
+                : parsed.systemSettings?.minWithdrawal || 2000,
+            maxWithdrawal:
+              parsed.systemSettings?.maxWithdrawal === 15000 ||
+              parsed.systemSettings?.maxWithdrawal === 50000 ||
+              !parsed.systemSettings?.maxWithdrawal
+                ? 20000
+                : parsed.systemSettings.maxWithdrawal,
           },
           auditLogs: parsed.auditLogs || initial.auditLogs,
         };
@@ -1218,6 +1227,80 @@ class DatabaseManager {
 
     // Clean up task session
     activeTaskSessions.delete(taskToken);
+
+    this.saveData();
+    return { success: true, rewardBdt: reward, user };
+  }
+
+  // --- Math Quiz Tasks (সহজ + অংক, ৳৫ প্রতি অংক, দৈনিক ৫০০টি, ১৫s Adsterra Smartlink) ---
+  public getMathTaskStatus(userId: string): {
+    dailyLimit: number;
+    todayCompleted: number;
+    remaining: number;
+    rewardBdt: number;
+    adDurationSeconds: number;
+    smartlinkUrl: string;
+  } {
+    const today = new Date().toISOString().split('T')[0];
+    const todayCompleted = this.data.transactions.filter(
+      (t) => t.userId === userId && t.type === 'task' && t.createdAt.startsWith(today)
+    ).length;
+
+    const dailyLimit = 500;
+    const remaining = Math.max(0, dailyLimit - todayCompleted);
+
+    return {
+      dailyLimit,
+      todayCompleted,
+      remaining,
+      rewardBdt: 5.0,
+      adDurationSeconds: 15,
+      smartlinkUrl: 'https://www.profitableratecpmnetwork.com/zepyk3kzy?key=b88e21c08441dec7aa791cb01d7a6ead',
+    };
+  }
+
+  public completeMathTask(
+    userId: string,
+    mathAnswer: number,
+    expectedAnswer: number,
+    _elapsedSeconds?: number
+  ): { success: boolean; rewardBdt?: number; user?: User; error?: string } {
+    const user = this.getUserById(userId);
+    if (!user) {
+      return { success: false, error: 'ইউজার পাওয়া যায়নি।' };
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    const todayCompleted = this.data.transactions.filter(
+      (t) => t.userId === userId && t.type === 'task' && t.createdAt.startsWith(today)
+    ).length;
+
+    if (todayCompleted >= 500) {
+      return { success: false, error: 'আজকের ৫০০টি অংক কাজের সীমা পূর্ণ হয়েছে। আগামীকাল আবার চেষ্টা করুন!' };
+    }
+
+    if (Number(mathAnswer) !== Number(expectedAnswer)) {
+      return { success: false, error: 'ভুল উত্তর! দয়া করে সঠিক যোগফলটি লিখুন।' };
+    }
+
+    const reward = 5.0;
+    user.balance = Number((user.balance + reward).toFixed(2));
+    user.totalEarned = Number((user.totalEarned + reward).toFixed(2));
+    user.taskEarnings = Number((user.taskEarnings + reward).toFixed(2));
+    user.completedTasksCount = (user.completedTasksCount || 0) + 1;
+    user.lastActive = new Date().toISOString();
+
+    const txId = `tx_math_${Date.now()}`;
+    this.data.transactions.unshift({
+      id: txId,
+      userId: user.id,
+      username: user.username,
+      type: 'task',
+      amount: reward,
+      status: 'completed',
+      description: `Math Quiz Task (+৳5.00)`,
+      createdAt: new Date().toISOString(),
+    });
 
     this.saveData();
     return { success: true, rewardBdt: reward, user };

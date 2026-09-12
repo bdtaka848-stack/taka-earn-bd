@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Advertisement } from '../../types.js';
 import { useApp } from '../../context/AppContext.js';
 import { formatBdt } from '../../utils/format.js';
+import { openAdsterraSmartlink, ADSTERRA_SMARTLINK_URL } from '../../utils/constants.js';
 import {
   Tv,
   Play,
@@ -16,6 +17,7 @@ import {
   VolumeX,
   TrendingUp,
   RotateCw,
+  ExternalLink,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -40,6 +42,8 @@ export const WatchAdsSection: React.FC = () => {
   const [isMuted, setIsMuted] = useState(true);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const startTimeRef = useRef<number>(0);
+  const claimingRef = useRef<boolean>(false);
 
   const fetchAds = useCallback(async () => {
     try {
@@ -67,67 +71,99 @@ export const WatchAdsSection: React.FC = () => {
     fetchAds();
   }, [fetchAds, user?.id]);
 
-  const handleInterrupt = useCallback((reason: string) => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    setInterrupted(true);
-    setInterruptionReason(reason);
-    if (sessionId) {
-      fetch('/api/ads/cancel-watch', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId }),
-      }).catch(console.error);
-    }
-  }, [sessionId]);
+  const claimAdReward = useCallback(async (currentSessionId?: string) => {
+    const activeSession = currentSessionId || sessionId;
+    if (!activeSession || claimingRef.current) return;
+    claimingRef.current = true;
+    setIsSubmitting(true);
 
-  // Tab & focus tracking anti-cheat
+    try {
+      const res = await fetch('/api/ads/claim-reward', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': localStorage.getItem('taskbdt_current_user_id') || 'usr_demo_1',
+        },
+        body: JSON.stringify({ sessionId: activeSession }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        const reward = data.rewardBdt ?? 5.0;
+        setCompletedReward(reward);
+        setTodayWatched((prev) => prev + 1);
+        setRemaining((prev) => Math.max(0, prev - 1));
+        await refreshUser();
+        addToast('success', `🎉 অভিনন্দন! ১৫ সেকেন্ড সম্পূর্ণ করায় +${formatBdt(reward)} ওয়ালেটে জমা হয়েছে!`);
+      } else {
+        setInterrupted(true);
+        setInterruptionReason(data.error || 'বিজ্ঞাপন ভেরিফিকেশন ব্যর্থ হয়েছে।');
+      }
+    } catch {
+      setInterrupted(true);
+      setInterruptionReason('সার্ভার সংযোগে ত্রুটি: রিওয়ার্ড জমা দেওয়া যায়নি।');
+    } finally {
+      setIsSubmitting(false);
+      claimingRef.current = false;
+    }
+  }, [sessionId, refreshUser, addToast]);
+
+  // Window Focus Handler - When user returns from the Adsterra Smartlink tab
   useEffect(() => {
     if (!activeAd || completedReward !== null || interrupted) return;
 
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        handleInterrupt('ট্যাব পরিবর্তন বা মিনিমাইজ করা হয়েছে। বিজ্ঞাপনটি অবিচ্ছিন্নভাবে দেখতে হবে।');
+    const handleWindowFocus = () => {
+      if (startTimeRef.current > 0) {
+        const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+        const remainingTime = Math.max(0, 15 - elapsed);
+        setSecondsRemaining(remainingTime);
+
+        if (remainingTime <= 0 && !claimingRef.current && !completedReward) {
+          if (timerRef.current) clearInterval(timerRef.current);
+          claimAdReward();
+        }
       }
     };
 
-    const handleBlur = () => {
-      handleInterrupt('উইন্ডো ফোকাস হারিয়ে গেছে। বিজ্ঞাপন চলাকালীন ব্রাউজার পরিবর্তন করা যাবে না।');
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('blur', handleBlur);
-
+    window.addEventListener('focus', handleWindowFocus);
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('blur', handleBlur);
+      window.removeEventListener('focus', handleWindowFocus);
     };
-  }, [activeAd, completedReward, interrupted, handleInterrupt]);
+  }, [activeAd, completedReward, interrupted, claimAdReward]);
 
   // Timer ticker
   useEffect(() => {
     if (!activeAd || interrupted || completedReward !== null) return;
 
     timerRef.current = setInterval(() => {
-      setSecondsRemaining((prev) => {
-        if (prev <= 1) {
+      if (startTimeRef.current > 0) {
+        const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+        const rem = Math.max(0, 15 - elapsed);
+        setSecondsRemaining(rem);
+
+        if (rem <= 0) {
           if (timerRef.current) clearInterval(timerRef.current);
           claimAdReward();
-          return 0;
         }
-        return prev - 1;
-      });
+      } else {
+        setSecondsRemaining((prev) => {
+          if (prev <= 1) {
+            if (timerRef.current) clearInterval(timerRef.current);
+            claimAdReward();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }
     }, 1000);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [activeAd, interrupted, completedReward]);
+  }, [activeAd, interrupted, completedReward, claimAdReward]);
 
   const startWatching = async (adToWatch?: Advertisement) => {
-    const targetAd = adToWatch || ads[0];
+    const targetAd = adToWatch || ads[0] || videoCpmTask;
     if (!targetAd) {
       addToast('error', 'বর্তমানে কোনো বিজ্ঞাপন প্রস্তুত নেই।');
       return;
@@ -138,14 +174,20 @@ export const WatchAdsSection: React.FC = () => {
       return;
     }
 
-    try {
-      setInterrupted(false);
-      setInterruptionReason('');
-      setCompletedReward(null);
-      setActiveAd(targetAd);
-      const duration = targetAd.durationSeconds || 15;
-      setSecondsRemaining(duration);
+    // 1. Open the Adsterra Smartlink URL in a new browser tab/window immediately
+    openAdsterraSmartlink();
 
+    // 2. Start timer state
+    startTimeRef.current = Date.now();
+    claimingRef.current = false;
+    setInterrupted(false);
+    setInterruptionReason('');
+    setCompletedReward(null);
+    setActiveAd(targetAd);
+    const duration = targetAd.durationSeconds || 15;
+    setSecondsRemaining(duration);
+
+    try {
       const res = await fetch(`/api/ads/${targetAd.id}/start-watch`, {
         method: 'POST',
         headers: {
@@ -167,38 +209,6 @@ export const WatchAdsSection: React.FC = () => {
     }
   };
 
-  const claimAdReward = async () => {
-    if (!sessionId) return;
-    setIsSubmitting(true);
-
-    try {
-      const res = await fetch('/api/ads/claim-reward', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': localStorage.getItem('taskbdt_current_user_id') || 'usr_demo_1',
-        },
-        body: JSON.stringify({ sessionId }),
-      });
-
-      const data = await res.json();
-      if (res.ok && data.success) {
-        const reward = data.rewardBdt ?? 5.0;
-        setCompletedReward(reward);
-        setTodayWatched((prev) => prev + 1);
-        setRemaining((prev) => Math.max(0, prev - 1));
-        await refreshUser();
-        addToast('success', `🎉 অভিনন্দন! বিজ্ঞাপন দেখার জন্য +${formatBdt(reward)} যুক্ত হয়েছে।`);
-      } else {
-        handleInterrupt(data.error || 'বিজ্ঞাপন ভেরিফিকেশন ব্যর্থ হয়েছে।');
-      }
-    } catch {
-      handleInterrupt('সার্ভার এরর: রিওয়ার্ড সংগ্রহ করা যায়নি।');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const closeAdModal = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     if (sessionId && !completedReward) {
@@ -212,6 +222,7 @@ export const WatchAdsSection: React.FC = () => {
     setSessionId(null);
     setCompletedReward(null);
     setInterrupted(false);
+    startTimeRef.current = 0;
   };
 
   // Video CPM single work item (default or from API)
@@ -257,7 +268,7 @@ export const WatchAdsSection: React.FC = () => {
           <div className="flex flex-wrap items-center gap-2">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-xs font-bold shadow-sm">
               <Tv className="w-4 h-4 text-indigo-400" />
-              <span>Watch Ads &middot; Video CPM একমাত্র নির্ধারিত কাজ</span>
+              <span>Watch Ads · Video CPM একমাত্র নির্ধারিত কাজ</span>
             </div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold">
               <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
@@ -270,7 +281,7 @@ export const WatchAdsSection: React.FC = () => {
           </div>
 
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
-            Video CPM &middot; <span className="text-indigo-400">১৫ সেকেন্ডে ৫ টাকা আয়</span>
+            Video CPM · <span className="text-indigo-400">১৫ সেকেন্ডে ৫ টাকা আয়</span>
           </h2>
 
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
@@ -355,7 +366,7 @@ export const WatchAdsSection: React.FC = () => {
                   {videoCpmTask.title}
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  একমাত্র নির্ধারিত কাজ &middot; ১টি ক্লিকেই ভিডিও দেখা শুরু করুন
+                  একমাত্র নির্ধারিত কাজ · ১টি ক্লিকেই ভিডিও দেখা শুরু করুন
                 </p>
               </div>
             </div>
@@ -442,7 +453,7 @@ export const WatchAdsSection: React.FC = () => {
               <span>
                 {remaining <= 0
                   ? 'আজকের ৫০০টি ভিডিও বিজ্ঞাপন সম্পন্ন হয়েছে'
-                  : `ভিডিও অ্যাড দেখুন &middot; ৫.০০ টাকা আয় করুন (${remaining} টি বাকি)`}
+                  : `ভিডিও অ্যাড দেখুন · ৫.০০ টাকা আয় করুন (${remaining} টি বাকি)`}
               </span>
             </button>
           </div>
@@ -476,7 +487,7 @@ export const WatchAdsSection: React.FC = () => {
             </div>
 
             <p className="text-[11px] text-slate-500 leading-relaxed">
-              ওয়ালেটে ৫০০ টাকা জমলেই বিকাশ, নগদ বা বাইন্যান্সের (USDT) মাধ্যমে সরাসরি উইথড্র নেওয়া যাবে।
+              ওয়ালেটে ২,০০০ টাকা জমলেই বিকাশ, নগদ বা বাইন্যান্সের (USDT) মাধ্যমে সরাসরি উইথড্র নেওয়া যাবে।
             </p>
           </div>
 
@@ -509,7 +520,7 @@ export const WatchAdsSection: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
                   <span className="text-xs font-bold uppercase tracking-wider text-indigo-300">
-                    Video CPM &middot; ১৫ সেকেন্ড বিজ্ঞাপন চলছে
+                    Video CPM · ১৫ সেকেন্ড বিজ্ঞাপন চলছে
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -569,18 +580,31 @@ export const WatchAdsSection: React.FC = () => {
                   </p>
                 </div>
               ) : (
-                <div className="text-center py-3 mb-4">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950 border border-slate-800 text-slate-300 text-xs font-mono mb-2">
-                    <Clock className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>টাইমার বাকি আছে</span>
+                <div className="space-y-4 mb-4">
+                  <div className="text-center py-2">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950 border border-slate-800 text-slate-300 text-xs font-mono mb-2">
+                      <Clock className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>টাইমার চলছে</span>
+                    </div>
+                    <div className="text-5xl font-black text-white font-mono tracking-tight">
+                      {secondsRemaining}s
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">
+                      স্পন্সর উইন্ডোতে ১৫ সেকেন্ড ভিজিট করুন, সময় শেষে পাবেন{' '}
+                      <span className="font-bold text-emerald-400 font-mono">+৳ ৫.০০</span>
+                    </p>
                   </div>
-                  <div className="text-5xl font-black text-white font-mono tracking-tight">
-                    {secondsRemaining}s
-                  </div>
-                  <p className="text-xs text-slate-400 mt-1">
-                    এই উইন্ডোতে থাকুন, সময় শেষে পাবেন{' '}
-                    <span className="font-bold text-emerald-400 font-mono">+৳ ৫.০০</span>
-                  </p>
+
+                  {/* Direct Link Access Button */}
+                  <a
+                    href={ADSTERRA_SMARTLINK_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2.5 px-4 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 hover:text-white text-xs font-bold flex items-center justify-center gap-2 transition"
+                  >
+                    <span>স্পন্সর পেজ আবার খুলুন (Adsterra Smartlink)</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
                 </div>
               )}
 
@@ -603,7 +627,7 @@ export const WatchAdsSection: React.FC = () => {
                       className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-black text-sm shadow-lg shadow-emerald-950/60 flex items-center justify-center gap-2 transition cursor-pointer"
                     >
                       <Play className="w-4 h-4 fill-current" />
-                      <span>পরবর্তী বিজ্ঞাপন দেখুন (+৳৫.০০) &middot; {remaining}টি বাকি</span>
+                      <span>পরবর্তী বিজ্ঞাপন দেখুন (+৳৫.০০) · {remaining}টি বাকি</span>
                     </button>
                   ) : (
                     <div className="p-3 rounded-xl bg-slate-950 text-center text-xs font-bold text-amber-300 border border-slate-800">
@@ -619,9 +643,31 @@ export const WatchAdsSection: React.FC = () => {
                   </button>
                 </div>
               ) : (
-                <div className="text-center text-[11px] text-slate-500">
-                  <Shield className="w-3.5 h-3.5 inline mr-1 text-slate-400" />
-                  ০ সেকেন্ড হওয়ার পূর্বে উইন্ডো বন্ধ করলে বা ট্যাব বদলালে রিওয়ার্ড বাতিল হবে।
+                <div className="space-y-2">
+                  {secondsRemaining <= 0 ? (
+                    <button
+                      onClick={() => claimAdReward()}
+                      disabled={isSubmitting}
+                      className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm shadow-lg flex items-center justify-center gap-2 transition cursor-pointer"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <RotateCw className="w-4 h-4 animate-spin" />
+                          <span>ব্যালেন্স জমা হচ্ছে...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4" />
+                          <span>রিওয়ার্ড ক্লেইম করুন (+৳৫.০০)</span>
+                        </>
+                      )}
+                    </button>
+                  ) : (
+                    <div className="text-center text-[11px] text-slate-400 p-2 rounded-xl bg-slate-950/80 border border-slate-800/80">
+                      <Shield className="w-3.5 h-3.5 inline mr-1 text-emerald-400" />
+                      স্পন্সর সাইট দেখুন। ১৫ সেকেন্ড পূর্ণ হলে স্বয়ংক্রিয়ভাবে ৫.০০ টাকা যুক্ত হবে।
+                    </div>
+                  )}
                 </div>
               )}
             </motion.div>

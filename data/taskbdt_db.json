@@ -7,18 +7,18 @@
       "email": "sabbir@example.com",
       "phone": "01712345678",
       "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
-      "balance": 965.5,
-      "totalEarned": 2130,
+      "balance": 987.5,
+      "totalEarned": 2152,
       "referralEarnings": 265,
       "taskEarnings": 820,
-      "adEarnings": 340.5,
-      "spinEarnings": 339.5,
+      "adEarnings": 350.5,
+      "spinEarnings": 351.5,
       "referralCode": "BDT888",
       "referralsCount": 7,
       "activeReferralsCount": 5,
       "status": "active",
       "createdAt": "2026-08-01T10:00:00.000Z",
-      "lastActive": "2026-09-09T12:39:12.786Z"
+      "lastActive": "2026-09-12T08:22:17.047Z"
     },
     {
       "id": "usr_tanvir_2",
@@ -198,6 +198,46 @@
     }
   ],
   "transactions": [
+    {
+      "id": "tx_spn_1789201337047",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "spin",
+      "amount": 10,
+      "status": "completed",
+      "description": "Lucky Spin win: ৳ 10",
+      "createdAt": "2026-09-12T08:22:17.047Z"
+    },
+    {
+      "id": "tx_spn_1789201209342",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "spin",
+      "amount": 2,
+      "status": "completed",
+      "description": "Lucky Spin win: ৳ 2",
+      "createdAt": "2026-09-12T08:20:09.342Z"
+    },
+    {
+      "id": "tx_ad_1789200994140",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "ad",
+      "amount": 5,
+      "status": "completed",
+      "description": "Watch & Earn: Video CPM স্পন্সর ভিডিও অ্যাড (Watch 15s Earn ৳5)",
+      "createdAt": "2026-09-12T08:16:34.140Z"
+    },
+    {
+      "id": "tx_ad_1789200975503",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "ad",
+      "amount": 5,
+      "status": "completed",
+      "description": "Watch & Earn: Video CPM স্পন্সর ভিডিও অ্যাড (Watch 15s Earn ৳5)",
+      "createdAt": "2026-09-12T08:16:15.503Z"
+    },
     {
       "id": "tx_spn_1788957552786",
       "userId": "usr_demo_1",
@@ -446,7 +486,7 @@
     "type": "fixed",
     "commissionRate": 10,
     "fixedAmount": 25,
-    "minWithdrawalForCommission": 500
+    "minWithdrawalForCommission": 2000
   },
   "spinSettings": {
     "enabled": true,
@@ -499,6 +539,20 @@
     ]
   },
   "spinResults": [
+    {
+      "id": "spn_1789201337047",
+      "userId": "usr_demo_1",
+      "rewardBdt": 10,
+      "sliceIndex": 1,
+      "spunAt": "2026-09-12T08:22:17.047Z"
+    },
+    {
+      "id": "spn_1789201209342",
+      "userId": "usr_demo_1",
+      "rewardBdt": 2,
+      "sliceIndex": 2,
+      "spunAt": "2026-09-12T08:20:09.342Z"
+    },
     {
       "id": "spn_1788957552786",
       "userId": "usr_demo_1",
@@ -613,7 +667,7 @@
       "rewardBdt": 5,
       "dailyLimit": 500,
       "enabled": true,
-      "viewsCount": 4890,
+      "viewsCount": 4892,
       "createdAt": "2026-08-05T00:00:00.000Z"
     }
   ],
@@ -621,8 +675,8 @@
     "siteName": "TakaEarnBD Rewards",
     "currencySymbol": "৳",
     "currencyCode": "BDT",
-    "minWithdrawal": 500,
-    "maxWithdrawal": 50000,
+    "minWithdrawal": 2000,
+    "maxWithdrawal": 20000,
     "withdrawalFeePercent": 2.5,
     "bKashEnabled": true,
     "nagadEnabled": true,

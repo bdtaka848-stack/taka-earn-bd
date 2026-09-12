@@ -138,7 +138,7 @@ export const WalletSection: React.FC = () => {
                   {formatBdt(data?.pendingBalance || 0)}
                 </strong>
               </span>
-              <span>&bull;</span>
+              <span>•</span>
               <span>
                 Total Withdrawn:{' '}
                 <strong className="text-slate-200 font-mono">
@@ -188,7 +188,7 @@ export const WalletSection: React.FC = () => {
             className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 transition cursor-pointer"
           >
             <span>টাকা তুলুন</span>
-            <span>&rarr;</span>
+            <span>→</span>
           </button>
         </div>
 

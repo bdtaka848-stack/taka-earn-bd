@@ -242,7 +242,7 @@ export const AdminUserManagement: React.FC = () => {
                         />
                         <div>
                           <div className="font-bold text-white text-sm">{u.name}</div>
-                          <div className="text-slate-400 text-[11px]">@{u.username} &bull; {u.email}</div>
+                          <div className="text-slate-400 text-[11px]">@{u.username} • {u.email}</div>
                         </div>
                       </div>
                     </td>
@@ -457,7 +457,7 @@ export const AdminUserManagement: React.FC = () => {
                       <div>
                         <div className="font-semibold text-white">{tx.description}</div>
                         <span className="text-[10px] text-slate-500 font-mono">
-                          {formatDate(tx.createdAt)} &bull; {tx.type.toUpperCase()}
+                          {formatDate(tx.createdAt)} • {tx.type.toUpperCase()}
                         </span>
                       </div>
                       <div className="text-right font-mono font-bold">

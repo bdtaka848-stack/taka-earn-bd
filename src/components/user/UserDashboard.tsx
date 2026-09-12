@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useApp } from '../../context/AppContext.js';
 import { formatBdt, formatDate } from '../../utils/format.js';
+import { openAdsterraSmartlink } from '../../utils/constants.js';
 import { DashboardData } from '../../types.js';
 import {
   Wallet,
@@ -70,8 +71,11 @@ export const UserDashboard: React.FC = () => {
             <span className="text-slate-300">{announcements[0]}</span>
           </div>
           <button
-            onClick={() => setUserView('tasks')}
-            className="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 shrink-0"
+            onClick={() => {
+              openAdsterraSmartlink();
+              setUserView('tasks');
+            }}
+            className="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 shrink-0 cursor-pointer"
           >
             <span>Explore Tasks</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -99,14 +103,14 @@ export const UserDashboard: React.FC = () => {
                   {formatBdt(stats?.todayEarnings || 0)}
                 </strong>
               </div>
-              <span>&bull;</span>
+              <span>•</span>
               <div className="flex items-center gap-1.5">
                 <span>Total Earned:</span>
                 <strong className="text-white font-mono">
                   {formatBdt(stats?.totalEarnings ?? user?.totalEarned ?? 0)}
                 </strong>
               </div>
-              <span>&bull;</span>
+              <span>•</span>
               <div className="flex items-center gap-1.5">
                 <span>Available to Withdraw:</span>
                 <strong className="text-emerald-300 font-mono">
@@ -132,7 +136,10 @@ export const UserDashboard: React.FC = () => {
               </div>
             </div>
             <button
-              onClick={() => setUserView('tasks')}
+              onClick={() => {
+                openAdsterraSmartlink();
+                setUserView('tasks');
+              }}
               className="flex-1 md:flex-none py-3 px-6 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-2 transition cursor-pointer"
             >
               <Flame className="w-4 h-4 text-amber-400" />
@@ -145,19 +152,25 @@ export const UserDashboard: React.FC = () => {
       {/* Quick Action Category Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <button
-          onClick={() => setUserView('tasks')}
-          className="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-850 flex flex-col items-center text-center group transition shadow-md"
+          onClick={() => {
+            openAdsterraSmartlink();
+            setUserView('tasks');
+          }}
+          className="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-850 flex flex-col items-center text-center group transition shadow-md cursor-pointer"
         >
           <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center mb-2 group-hover:scale-110 transition">
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <span className="text-xs font-bold text-white">Tasks</span>
-          <span className="text-[10px] text-slate-400">10s Ad Gate</span>
+          <span className="text-[10px] text-slate-400">সহজ অংক (৳৫)</span>
         </button>
 
         <button
-          onClick={() => setUserView('watch_ads')}
-          className="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-850 flex flex-col items-center text-center group transition shadow-md"
+          onClick={() => {
+            openAdsterraSmartlink();
+            setUserView('watch_ads');
+          }}
+          className="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-850 flex flex-col items-center text-center group transition shadow-md cursor-pointer"
         >
           <div className="w-11 h-11 rounded-2xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center mb-2 group-hover:scale-110 transition">
             <Tv className="w-5 h-5" />
@@ -168,7 +181,7 @@ export const UserDashboard: React.FC = () => {
 
         <button
           onClick={() => setUserView('spin')}
-          className="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-purple-500/50 hover:bg-slate-850 flex flex-col items-center text-center group transition shadow-md"
+          className="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-purple-500/50 hover:bg-slate-850 flex flex-col items-center text-center group transition shadow-md cursor-pointer"
         >
           <div className="w-11 h-11 rounded-2xl bg-purple-500/15 text-purple-400 flex items-center justify-center mb-2 group-hover:scale-110 transition">
             <Sparkles className="w-5 h-5" />
@@ -179,7 +192,7 @@ export const UserDashboard: React.FC = () => {
 
         <button
           onClick={() => setUserView('refer')}
-          className="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-850 flex flex-col items-center text-center group transition shadow-md"
+          className="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-850 flex flex-col items-center text-center group transition shadow-md cursor-pointer"
         >
           <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center mb-2 group-hover:scale-110 transition">
             <Share2 className="w-5 h-5" />
@@ -190,7 +203,7 @@ export const UserDashboard: React.FC = () => {
 
         <button
           onClick={() => setUserView('withdraw')}
-          className="col-span-2 sm:col-span-1 p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-850 flex flex-col items-center text-center group transition shadow-md"
+          className="col-span-2 sm:col-span-1 p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-850 flex flex-col items-center text-center group transition shadow-md cursor-pointer"
         >
           <div className="flex items-center -space-x-2.5 mb-2 group-hover:scale-105 transition-transform">
             <BKashAppLogo size={28} className="ring-2 ring-slate-900 shadow-sm" />
@@ -198,7 +211,7 @@ export const UserDashboard: React.FC = () => {
             <BinanceAppLogo size={28} className="ring-2 ring-slate-900 shadow-sm" />
           </div>
           <span className="text-xs font-bold text-white">Withdraw BDT</span>
-          <span className="text-[10px] text-slate-400">bKash &bull; Nagad &bull; Binance</span>
+          <span className="text-[10px] text-slate-400">bKash • Nagad • Binance</span>
         </button>
       </div>
 
