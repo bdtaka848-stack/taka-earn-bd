@@ -1,0 +1,681 @@
+{
+  "users": [
+    {
+      "id": "usr_demo_1",
+      "username": "sabbir_khan",
+      "name": "Sabbir Hossain",
+      "email": "sabbir@example.com",
+      "phone": "01712345678",
+      "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      "balance": 965.5,
+      "totalEarned": 2130,
+      "referralEarnings": 265,
+      "taskEarnings": 820,
+      "adEarnings": 340.5,
+      "spinEarnings": 339.5,
+      "referralCode": "BDT888",
+      "referralsCount": 7,
+      "activeReferralsCount": 5,
+      "status": "active",
+      "createdAt": "2026-08-01T10:00:00.000Z",
+      "lastActive": "2026-09-09T12:39:12.786Z"
+    },
+    {
+      "id": "usr_tanvir_2",
+      "username": "tanvir_ahmed",
+      "name": "Tanvir Ahmed",
+      "email": "tanvir@example.com",
+      "phone": "01898765432",
+      "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      "balance": 120,
+      "totalEarned": 350,
+      "referralEarnings": 0,
+      "taskEarnings": 210,
+      "adEarnings": 85,
+      "spinEarnings": 55,
+      "referralCode": "TANVIR26",
+      "referredBy": "BDT888",
+      "referralsCount": 1,
+      "activeReferralsCount": 1,
+      "status": "active",
+      "createdAt": "2026-08-15T12:30:00.000Z",
+      "lastActive": "2026-09-09T08:12:35.381Z"
+    },
+    {
+      "id": "usr_nusrat_3",
+      "username": "nusrat_jahan",
+      "name": "Nusrat Jahan",
+      "email": "nusrat@example.com",
+      "phone": "01911223344",
+      "avatarUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80",
+      "balance": 75,
+      "totalEarned": 190,
+      "referralEarnings": 25,
+      "taskEarnings": 110,
+      "adEarnings": 30,
+      "spinEarnings": 25,
+      "referralCode": "NUSRAT9",
+      "referredBy": "BDT888",
+      "referralsCount": 0,
+      "activeReferralsCount": 0,
+      "status": "active",
+      "createdAt": "2026-08-20T15:45:00.000Z",
+      "lastActive": "2026-09-09T08:12:35.381Z"
+    }
+  ],
+  "admins": [
+    {
+      "id": "adm_1",
+      "username": "demo",
+      "name": "TaskBDT Administrator",
+      "role": "super_admin"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task_youtube_sub",
+      "title": "Subscribe to TechNews BD Official Channel",
+      "description": "Watch video for 30 seconds, like the video and subscribe to the channel for genuine tech updates in Bangla.",
+      "rewardBdt": 15,
+      "durationSeconds": 30,
+      "adRequired": true,
+      "adDurationSeconds": 10,
+      "adId": "ad_gate_default",
+      "category": "social",
+      "status": "active",
+      "isRepeatable": false,
+      "dailyLimit": 1,
+      "icon": "Youtube",
+      "completedCount": 142,
+      "createdAt": "2026-08-10T10:00:00.000Z"
+    },
+    {
+      "id": "task_install_app",
+      "title": "Install & Review Daraz Bangladesh App",
+      "description": "Download the updated 2026 version of the mobile app, browse categories for 60 seconds and submit review.",
+      "rewardBdt": 35,
+      "durationSeconds": 60,
+      "adRequired": true,
+      "adDurationSeconds": 10,
+      "adId": "ad_gate_default",
+      "category": "app_install",
+      "status": "active",
+      "isRepeatable": false,
+      "dailyLimit": 1,
+      "icon": "Smartphone",
+      "completedCount": 88,
+      "createdAt": "2026-08-12T11:00:00.000Z"
+    },
+    {
+      "id": "task_read_article",
+      "title": "Read & Verify \"Smart Digital Economy 2026\"",
+      "description": "Read the comprehensive report on digital micro-payments in Bangladesh for 25 seconds until completion.",
+      "rewardBdt": 10,
+      "durationSeconds": 25,
+      "adRequired": true,
+      "adDurationSeconds": 10,
+      "adId": "ad_gate_default",
+      "category": "read",
+      "status": "active",
+      "isRepeatable": true,
+      "dailyLimit": 3,
+      "icon": "BookOpen",
+      "completedCount": 310,
+      "createdAt": "2026-08-15T09:00:00.000Z"
+    },
+    {
+      "id": "task_fintech_survey",
+      "title": "Complete Mobile Banking Survey (bKash/Nagad)",
+      "description": "Answer 5 quick multiple choice questions about your experience using mobile financial services in Dhaka.",
+      "rewardBdt": 45,
+      "durationSeconds": 50,
+      "adRequired": true,
+      "adDurationSeconds": 10,
+      "adId": "ad_gate_default",
+      "category": "survey",
+      "status": "active",
+      "isRepeatable": false,
+      "dailyLimit": 1,
+      "icon": "CheckSquare",
+      "completedCount": 65,
+      "createdAt": "2026-08-18T14:00:00.000Z"
+    },
+    {
+      "id": "task_daily_checkin",
+      "title": "Daily Quick Platform Verification",
+      "description": "Daily check-in task. Watch mandatory 10s ad gate, stay on page for 15s to claim daily attendance bonus.",
+      "rewardBdt": 5,
+      "durationSeconds": 15,
+      "adRequired": true,
+      "adDurationSeconds": 10,
+      "adId": "ad_gate_default",
+      "category": "daily",
+      "status": "active",
+      "isRepeatable": true,
+      "dailyLimit": 1,
+      "icon": "Calendar",
+      "completedCount": 820,
+      "createdAt": "2026-08-20T08:00:00.000Z"
+    },
+    {
+      "id": "task_telegram_join",
+      "title": "Join TaskBDT Community Telegram Group",
+      "description": "Join our official community group for exclusive high-paying tasks, promo codes, and withdrawal proofs.",
+      "rewardBdt": 20,
+      "durationSeconds": 20,
+      "adRequired": true,
+      "adDurationSeconds": 10,
+      "adId": "ad_gate_default",
+      "category": "social",
+      "status": "active",
+      "isRepeatable": false,
+      "dailyLimit": 1,
+      "icon": "Send",
+      "completedCount": 412,
+      "createdAt": "2026-08-22T10:00:00.000Z"
+    }
+  ],
+  "taskCompletions": [
+    {
+      "id": "cmp_1",
+      "userId": "usr_demo_1",
+      "taskId": "task_youtube_sub",
+      "taskTitle": "Subscribe to TechNews BD Official Channel",
+      "rewardBdt": 15,
+      "startedAt": "2026-09-08T09:12:00.000Z",
+      "completedAt": "2026-09-08T09:12:40.000Z",
+      "status": "completed"
+    },
+    {
+      "id": "cmp_2",
+      "userId": "usr_demo_1",
+      "taskId": "task_daily_checkin",
+      "taskTitle": "Daily Quick Platform Verification",
+      "rewardBdt": 5,
+      "startedAt": "2026-09-09T00:30:00.000Z",
+      "completedAt": "2026-09-09T00:30:25.000Z",
+      "status": "completed"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "tx_spn_1788957552786",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "spin",
+      "amount": 25,
+      "status": "completed",
+      "description": "Lucky Spin win: ৳ 25",
+      "createdAt": "2026-09-09T12:39:12.786Z"
+    },
+    {
+      "id": "tx_spn_1788957523699",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "spin",
+      "amount": 10,
+      "status": "completed",
+      "description": "Lucky Spin win: ৳ 10",
+      "createdAt": "2026-09-09T12:38:43.699Z"
+    },
+    {
+      "id": "tx_spn_1788957417280",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "spin",
+      "amount": 5,
+      "status": "completed",
+      "description": "Lucky Spin win: ৳ 5",
+      "createdAt": "2026-09-09T12:36:57.280Z"
+    },
+    {
+      "id": "tx_spn_1788956897071",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "spin",
+      "amount": 5,
+      "status": "completed",
+      "description": "Lucky Spin win: ৳ 5",
+      "createdAt": "2026-09-09T12:28:17.071Z"
+    },
+    {
+      "id": "tx_spn_1788956891088",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "spin",
+      "amount": 5,
+      "status": "completed",
+      "description": "Lucky Spin win: ৳ 5",
+      "createdAt": "2026-09-09T12:28:11.088Z"
+    },
+    {
+      "id": "tx_spn_1788956885290",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "spin",
+      "amount": 5,
+      "status": "completed",
+      "description": "Lucky Spin win: ৳ 5",
+      "createdAt": "2026-09-09T12:28:05.290Z"
+    },
+    {
+      "id": "tx_spn_1788956877958",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "spin",
+      "amount": 25,
+      "status": "completed",
+      "description": "Lucky Spin win: ৳ 25",
+      "createdAt": "2026-09-09T12:27:57.958Z"
+    },
+    {
+      "id": "tx_spn_1788956870987",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "spin",
+      "amount": 10,
+      "status": "completed",
+      "description": "Lucky Spin win: ৳ 10",
+      "createdAt": "2026-09-09T12:27:50.987Z"
+    },
+    {
+      "id": "tx_ref_1788956351457_y1th",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "referral",
+      "amount": 25,
+      "status": "completed",
+      "description": "৳25.00 রেফার বোনাস জমা হয়েছে (আমন্ত্রিত ব্যবহারকারী: @hasan_1024)",
+      "createdAt": "2026-09-09T12:19:11.457Z"
+    },
+    {
+      "id": "tx_init_1",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "task",
+      "amount": 15,
+      "status": "completed",
+      "description": "Reward for task: Subscribe to TechNews BD Official Channel",
+      "createdAt": "2026-09-08T09:12:40.000Z"
+    },
+    {
+      "id": "tx_init_2",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "ad",
+      "amount": 4.5,
+      "status": "completed",
+      "description": "Reward for watching Social Bar video ad #1",
+      "createdAt": "2026-09-08T11:20:00.000Z"
+    },
+    {
+      "id": "tx_init_3",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "spin",
+      "amount": 25,
+      "status": "completed",
+      "description": "Daily Lucky Spin wheel win reward",
+      "createdAt": "2026-09-08T14:45:00.000Z"
+    },
+    {
+      "id": "tx_init_4",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "referral",
+      "amount": 25,
+      "status": "completed",
+      "description": "Referral commission bonus for new user tanvir_ahmed",
+      "createdAt": "2026-08-15T12:35:00.000Z"
+    },
+    {
+      "id": "tx_init_5",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "withdrawal",
+      "amount": -500,
+      "status": "completed",
+      "description": "Withdrawal to bKash 01712345678 (Fee: ৳12.50)",
+      "createdAt": "2026-08-28T16:00:00.000Z"
+    },
+    {
+      "id": "tx_init_6",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "type": "task",
+      "amount": 5,
+      "status": "completed",
+      "description": "Reward for task: Daily Quick Platform Verification",
+      "createdAt": "2026-09-09T00:30:25.000Z"
+    }
+  ],
+  "withdrawals": [
+    {
+      "id": "wth_demo_completed",
+      "userId": "usr_demo_1",
+      "username": "sabbir_khan",
+      "userEmail": "sabbir@example.com",
+      "method": "bKash",
+      "details": {
+        "accountNumber": "01712345678"
+      },
+      "amount": 500,
+      "fee": 12.5,
+      "netAmount": 487.5,
+      "status": "completed",
+      "adminNote": "TrxID: 9J7K3L21AB disbursed via bKash Merchant API",
+      "createdAt": "2026-08-28T16:00:00.000Z",
+      "updatedAt": "2026-08-28T16:45:00.000Z"
+    },
+    {
+      "id": "wth_demo_pending",
+      "userId": "usr_tanvir_2",
+      "username": "tanvir_ahmed",
+      "userEmail": "tanvir@example.com",
+      "method": "Nagad",
+      "details": {
+        "accountNumber": "01898765432"
+      },
+      "amount": 200,
+      "fee": 5,
+      "netAmount": 195,
+      "status": "pending",
+      "adminNote": "",
+      "createdAt": "2026-09-08T21:15:00.000Z",
+      "updatedAt": "2026-09-08T21:15:00.000Z"
+    },
+    {
+      "id": "wth_demo_processing",
+      "userId": "usr_nusrat_3",
+      "username": "nusrat_jahan",
+      "userEmail": "nusrat@example.com",
+      "method": "USDT",
+      "details": {
+        "network": "TRC20",
+        "walletAddress": "TYDzsYUEpvnYmQK4zGP9s21K9QhLwHxyz7"
+      },
+      "amount": 366,
+      "fee": 9.15,
+      "netAmount": 356.85,
+      "status": "processing",
+      "adminNote": "Awaiting TRC20 network broadcast confirmation",
+      "createdAt": "2026-09-09T00:10:00.000Z",
+      "updatedAt": "2026-09-09T00:40:00.000Z"
+    }
+  ],
+  "referrals": [
+    {
+      "id": "ref_1788956351457_3w6q",
+      "referrerId": "usr_demo_1",
+      "refereeId": "usr_mock_1788956351457",
+      "refereeUsername": "hasan_1024",
+      "status": "active",
+      "rewardBdt": 25,
+      "createdAt": "2026-09-09T12:19:11.457Z"
+    },
+    {
+      "id": "ref_1",
+      "referrerId": "usr_demo_1",
+      "refereeId": "usr_tanvir_2",
+      "refereeUsername": "tanvir_ahmed",
+      "status": "active",
+      "rewardBdt": 25,
+      "createdAt": "2026-08-15T12:30:00.000Z"
+    },
+    {
+      "id": "ref_2",
+      "referrerId": "usr_demo_1",
+      "refereeId": "usr_nusrat_3",
+      "refereeUsername": "nusrat_jahan",
+      "status": "active",
+      "rewardBdt": 25,
+      "createdAt": "2026-08-20T15:45:00.000Z"
+    },
+    {
+      "id": "ref_3",
+      "referrerId": "usr_demo_1",
+      "refereeId": "usr_shuvo_4",
+      "refereeUsername": "shuvo_roy",
+      "status": "active",
+      "rewardBdt": 25,
+      "createdAt": "2026-08-25T11:20:00.000Z"
+    }
+  ],
+  "referralSettings": {
+    "enabled": true,
+    "type": "fixed",
+    "commissionRate": 10,
+    "fixedAmount": 25,
+    "minWithdrawalForCommission": 500
+  },
+  "spinSettings": {
+    "enabled": true,
+    "dailyLimit": 500,
+    "requireAdBetweenSpins": true,
+    "adDurationSeconds": 15,
+    "slices": [
+      {
+        "label": "৳ 5",
+        "rewardBdt": 5,
+        "probability": 35,
+        "color": "#3b82f6",
+        "textColor": "#ffffff"
+      },
+      {
+        "label": "৳ 10",
+        "rewardBdt": 10,
+        "probability": 25,
+        "color": "#10b981",
+        "textColor": "#ffffff"
+      },
+      {
+        "label": "৳ 2",
+        "rewardBdt": 2,
+        "probability": 20,
+        "color": "#f59e0b",
+        "textColor": "#ffffff"
+      },
+      {
+        "label": "৳ 25",
+        "rewardBdt": 25,
+        "probability": 10,
+        "color": "#8b5cf6",
+        "textColor": "#ffffff"
+      },
+      {
+        "label": "৳ 50",
+        "rewardBdt": 50,
+        "probability": 7,
+        "color": "#ec4899",
+        "textColor": "#ffffff"
+      },
+      {
+        "label": "৳ 100 🏆",
+        "rewardBdt": 100,
+        "probability": 3,
+        "color": "#ef4444",
+        "textColor": "#ffffff"
+      }
+    ]
+  },
+  "spinResults": [
+    {
+      "id": "spn_1788957552786",
+      "userId": "usr_demo_1",
+      "rewardBdt": 25,
+      "sliceIndex": 3,
+      "spunAt": "2026-09-09T12:39:12.786Z"
+    },
+    {
+      "id": "spn_1788957523699",
+      "userId": "usr_demo_1",
+      "rewardBdt": 10,
+      "sliceIndex": 1,
+      "spunAt": "2026-09-09T12:38:43.699Z"
+    },
+    {
+      "id": "spn_1788957417280",
+      "userId": "usr_demo_1",
+      "rewardBdt": 5,
+      "sliceIndex": 0,
+      "spunAt": "2026-09-09T12:36:57.280Z"
+    },
+    {
+      "id": "spn_1788956897071",
+      "userId": "usr_demo_1",
+      "rewardBdt": 5,
+      "sliceIndex": 0,
+      "spunAt": "2026-09-09T12:28:17.071Z"
+    },
+    {
+      "id": "spn_1788956891088",
+      "userId": "usr_demo_1",
+      "rewardBdt": 5,
+      "sliceIndex": 0,
+      "spunAt": "2026-09-09T12:28:11.088Z"
+    },
+    {
+      "id": "spn_1788956885290",
+      "userId": "usr_demo_1",
+      "rewardBdt": 5,
+      "sliceIndex": 0,
+      "spunAt": "2026-09-09T12:28:05.290Z"
+    },
+    {
+      "id": "spn_1788956877958",
+      "userId": "usr_demo_1",
+      "rewardBdt": 25,
+      "sliceIndex": 3,
+      "spunAt": "2026-09-09T12:27:57.958Z"
+    },
+    {
+      "id": "spn_1788956870987",
+      "userId": "usr_demo_1",
+      "rewardBdt": 10,
+      "sliceIndex": 1,
+      "spunAt": "2026-09-09T12:27:50.987Z"
+    },
+    {
+      "id": "spn_1",
+      "userId": "usr_demo_1",
+      "rewardBdt": 25,
+      "sliceIndex": 3,
+      "spunAt": "2026-09-08T14:45:00.000Z"
+    }
+  ],
+  "advertisements": [
+    {
+      "id": "ad_gate_default",
+      "title": "Adsterra High CPM Sponsor Ad",
+      "provider": "Adsterra",
+      "codeSnippet": "<div class=\"bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-950 p-6 rounded-2xl border border-indigo-500/30 text-white text-center shadow-xl\">\n  <div class=\"inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-semibold mb-3\">\n    <span>★ Sponsored Premium Offer</span>\n  </div>\n  <h4 class=\"text-xl font-bold tracking-tight text-white mb-2\">Upgrade to Ultra Fast High-Yield Cloud Server</h4>\n  <p class=\"text-sm text-slate-300 max-w-md mx-auto mb-4 leading-relaxed\">\n    Get 80% exclusive discount on fast cloud hosting with global DDoS protection & 99.99% uptime guarantee.\n  </p>\n  <div class=\"flex items-center justify-center gap-3\">\n    <span class=\"inline-block px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-xs rounded-xl shadow-lg transition\">Explore Deal &rarr;</span>\n  </div>\n</div>",
+      "placement": "before_task",
+      "durationSeconds": 10,
+      "rewardBdt": 0,
+      "dailyLimit": 100,
+      "enabled": true,
+      "viewsCount": 1420,
+      "createdAt": "2026-08-01T00:00:00.000Z"
+    },
+    {
+      "id": "ad_popunder_direct",
+      "title": "Monetag / Popunder Traffic Network",
+      "provider": "Popunder",
+      "codeSnippet": "<!-- Popunder Integration Script Placeholder: configured in Popunder Zone ID -->",
+      "placement": "popunder",
+      "durationSeconds": 5,
+      "rewardBdt": 1.5,
+      "dailyLimit": 20,
+      "enabled": true,
+      "viewsCount": 4200,
+      "createdAt": "2026-08-12T00:00:00.000Z"
+    },
+    {
+      "id": "ad_dashboard_banner",
+      "title": "Top Banner - Bangladeshi Tech Offers",
+      "provider": "Adsterra",
+      "codeSnippet": "<div class=\"bg-gradient-to-r from-emerald-900/60 to-teal-900/60 p-4 rounded-xl border border-emerald-500/30 text-white flex items-center justify-between\">\n  <div>\n    <span class=\"text-[10px] font-bold tracking-wider uppercase text-emerald-400\">Featured Sponsor</span>\n    <h5 class=\"text-sm font-semibold\">Special bKash & Nagad CashBack deals</h5>\n  </div>\n  <span class=\"text-xs bg-emerald-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg\">Check Offers</span>\n</div>",
+      "placement": "dashboard",
+      "durationSeconds": 0,
+      "rewardBdt": 0,
+      "dailyLimit": 9999,
+      "enabled": true,
+      "viewsCount": 8120,
+      "createdAt": "2026-08-15T00:00:00.000Z"
+    },
+    {
+      "id": "ad_video_cpm_main",
+      "title": "Video CPM স্পন্সর ভিডিও অ্যাড (Watch 15s Earn ৳5)",
+      "provider": "Adsterra Video CPM",
+      "codeSnippet": "<div class=\"bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 p-6 rounded-2xl border border-indigo-500/40 text-center text-white shadow-xl\">\n  <div class=\"inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold mb-3 border border-amber-500/30\">\n    <span>★ Video CPM High-Revenue Partner</span>\n  </div>\n  <div class=\"w-14 h-14 mx-auto mb-3 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-2xl shadow-inner border border-indigo-500/30\">\n    ▶\n  </div>\n  <h4 class=\"text-xl font-black mb-1 text-white\">Adsterra Video CPM Network</h4>\n  <p class=\"text-xs text-slate-300 max-w-md mx-auto mb-4 leading-relaxed\">\n    সম্পূর্ণ ১৫ সেকেন্ড ভিডিও বিজ্ঞাপনটি মনোযোগ দিয়ে দেখুন। সময় শেষ হওয়ার সাথে সাথে ৫.০০ টাকা সরাসরি আপনার মূল ব্যালেন্সে জমা হবে।\n  </p>\n  <div class=\"text-xs font-bold text-emerald-400 bg-emerald-500/15 py-1.5 px-4 rounded-xl border border-emerald-500/30 inline-block\">\n    ✓ নিশ্চিত আয়: ৳ ৫.০০ (প্রতি ১৫ সেকেন্ড)\n  </div>\n</div>",
+      "placement": "watch_ads",
+      "durationSeconds": 15,
+      "rewardBdt": 5,
+      "dailyLimit": 500,
+      "enabled": true,
+      "viewsCount": 4890,
+      "createdAt": "2026-08-05T00:00:00.000Z"
+    }
+  ],
+  "systemSettings": {
+    "siteName": "TakaEarnBD Rewards",
+    "currencySymbol": "৳",
+    "currencyCode": "BDT",
+    "minWithdrawal": 500,
+    "maxWithdrawal": 50000,
+    "withdrawalFeePercent": 2.5,
+    "bKashEnabled": true,
+    "nagadEnabled": true,
+    "usdtEnabled": true,
+    "usdtExchangeRate": 122,
+    "bKashApiUrl": "https://tokenized.sandbox.bka.sh/v1.2.0-beta",
+    "bKashMerchantNumber": "01700000000",
+    "nagadMerchantId": "MERCHANT_BD_1001",
+    "usdtTrc20Address": "TNv9k1xL7Qp2mY4xZs8gH1vN8kL3w",
+    "adsterraPublisherId": "adst_pub_8492048",
+    "socialBarZoneId": "sb_zone_9921",
+    "popunderZoneId": "pop_zone_4412"
+  },
+  "auditLogs": [
+    {
+      "id": "log_1788957347519_406",
+      "adminUsername": "demo",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "targetType": "settings",
+      "targetId": "auth",
+      "details": "Admin logged in successfully from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-09-09T12:35:47.519Z"
+    },
+    {
+      "id": "log_1788942024769_13",
+      "adminUsername": "demo",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "targetType": "settings",
+      "targetId": "auth",
+      "details": "Admin logged in successfully from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-09-09T08:20:24.769Z"
+    },
+    {
+      "id": "log_1",
+      "adminUsername": "demo",
+      "action": "PLATFORM_INITIALIZATION",
+      "targetType": "settings",
+      "targetId": "sys_init",
+      "details": "TaskBDT Core engine launched with BDT currency standard and 10s verified ad gate.",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-08-01T00:00:00.000Z"
+    },
+    {
+      "id": "log_2",
+      "adminUsername": "demo",
+      "action": "UPDATE_WITHDRAWAL_STATUS",
+      "targetType": "withdrawal",
+      "targetId": "wth_demo_completed",
+      "details": "Approved and marked completed bKash withdrawal of ৳500.00 for user sabbir_khan",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-08-28T16:45:00.000Z"
+    }
+  ]
+}

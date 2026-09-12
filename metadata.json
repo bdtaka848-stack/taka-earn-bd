@@ -1,0 +1,6 @@
+{
+  "name": "TakaEarnBD",
+  "description": "Production-ready BDT (৳) rewards and task platform with verified 10-second ad gate, spin wheel, referrals, bKash/Nagad/USDT withdrawals, and comprehensive admin panel.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
