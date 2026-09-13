@@ -242,7 +242,10 @@ export const AdminUserManagement: React.FC = () => {
                         />
                         <div>
                           <div className="font-bold text-white text-sm">{u.name}</div>
-                          <div className="text-slate-400 text-[11px]">@{u.username} • {u.email}</div>
+                          <div className="text-slate-400 text-[11px] font-mono">
+                            <span className="text-emerald-400 font-bold">User:</span> {u.username} | <span className="text-amber-400 font-bold">Pass:</span> {u.password || '123456'}
+                          </div>
+                          <div className="text-slate-500 text-[10px]">{u.email}</div>
                         </div>
                       </div>
                     </td>

@@ -18,6 +18,10 @@ import {
   Award,
   Bell,
   Clock,
+  KeyRound,
+  UserPlus,
+  LogIn,
+  LogOut,
 } from 'lucide-react';
 import {
   BKashAppLogo,
@@ -26,7 +30,7 @@ import {
 } from '../common/PaymentLogos.js';
 
 export const UserDashboard: React.FC = () => {
-  const { user, setUserView } = useApp();
+  const { user, setUserView, openAuthModal, userLogout } = useApp();
 
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<DashboardData | null>(null);
@@ -82,6 +86,69 @@ export const UserDashboard: React.FC = () => {
           </button>
         </div>
       )}
+
+      {/* User Auth Status Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md">
+        {user ? (
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
+              <KeyRound className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-400">লগইনকৃত অ্যাকাউন্ট:</span>
+                <span className="text-xs font-bold text-white font-mono bg-slate-950 px-2 py-0.5 rounded-md border border-slate-800">
+                  @{user.username}
+                </span>
+                <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                  Active
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                Admin Password সুরক্ষিত রয়েছে • উত্তোলনের সর্বোচ্চ সীমা ২০,০০০ টাকা
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0">
+              <KeyRound className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-white">লগইন বা রেজিস্ট্রেশন করুন</span>
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                আপনার ৮-১৬ সংখ্যার Admin Username ও ৬-১২ অক্ষরের Password দিয়ে সহজে প্রবেশ করুন।
+              </p>
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => openAuthModal('register')}
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold transition"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            <span>নতুন রেজিস্ট্রেশন</span>
+          </button>
+          <button
+            onClick={() => openAuthModal('login')}
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span>{user ? 'অ্যাকাউন্ট বদল' : 'লগইন'}</span>
+          </button>
+          {user && (
+            <button
+              onClick={userLogout}
+              className="p-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 transition"
+              title="লগআউট"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* Main Balance & Earnings Hero Card */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-950/80 via-slate-900 to-slate-950 border border-emerald-500/30 p-6 sm:p-8 shadow-2xl">

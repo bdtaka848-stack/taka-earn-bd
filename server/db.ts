@@ -620,7 +620,10 @@ class DatabaseManager {
         // Ensure all keys exist
         const initial = getInitialData();
         return {
-          users: parsed.users || initial.users,
+          users: (parsed.users || initial.users).map((u: User) => ({
+            ...u,
+            password: u.password || '123456',
+          })),
           admins: parsed.admins || initial.admins,
           tasks: parsed.tasks || initial.tasks,
           taskCompletions: parsed.taskCompletions || initial.taskCompletions,
@@ -733,11 +736,12 @@ class DatabaseManager {
     return this.data.users.find((u) => u.username.toLowerCase() === username.toLowerCase());
   }
 
-  public createUser(userData: Partial<User> & { username: string; name: string; email: string; phone: string }): User {
+  public createUser(userData: Partial<User> & { username: string; password?: string; name: string; email: string; phone: string }): User {
     const code = 'BDT' + Math.floor(100000 + Math.random() * 900000);
     const newUser: User = {
       id: `usr_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
       username: userData.username.trim(),
+      password: userData.password?.trim() || '123456',
       name: userData.name.trim(),
       email: userData.email.trim(),
       phone: userData.phone.trim(),

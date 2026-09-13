@@ -16,6 +16,9 @@ import {
   Share2,
   ArrowDownLeft,
   User as UserIcon,
+  UserPlus,
+  LogIn,
+  KeyRound,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -30,6 +33,8 @@ export const Navbar: React.FC = () => {
     adminLogout,
     allUsersList,
     switchUser,
+    openAuthModal,
+    userLogout,
   } = useApp();
 
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -123,7 +128,27 @@ export const Navbar: React.FC = () => {
               </button>
             )}
 
-            {/* User switcher & profile menu */}
+            {/* When user is NOT logged in: Show Login & Register buttons */}
+            {!isAdminMode && !user && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => openAuthModal('login')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-bold transition"
+                >
+                  <LogIn className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>লগইন</span>
+                </button>
+                <button
+                  onClick={() => openAuthModal('register')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 text-xs font-bold shadow-md shadow-emerald-950/40 transition"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  <span>রেজিস্ট্রেশন</span>
+                </button>
+              </div>
+            )}
+
+            {/* User switcher & profile menu (when logged in) */}
             {!isAdminMode && user && (
               <div className="relative">
                 <button
@@ -143,7 +168,7 @@ export const Navbar: React.FC = () => {
                   <div className="absolute right-0 mt-2 w-64 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-2 z-50 text-xs">
                     <div className="px-3 py-2 border-b border-slate-800 mb-1">
                       <p className="text-white font-bold">{user.name}</p>
-                      <p className="text-slate-400 text-[11px]">@{user.username}</p>
+                      <p className="text-slate-400 text-[11px] font-mono">@{user.username}</p>
                       <div className="mt-1.5 inline-flex items-center gap-1 text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md">
                         <CheckCircle2 className="w-3 h-3" /> Account Active
                       </div>
@@ -158,6 +183,28 @@ export const Navbar: React.FC = () => {
                     >
                       <UserIcon className="w-4 h-4 text-slate-400" />
                       <span>My Profile & Referral Code</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        openAuthModal('register');
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-emerald-300 hover:bg-emerald-500/10 transition"
+                    >
+                      <UserPlus className="w-4 h-4 text-emerald-400" />
+                      <span>নতুন অ্যাকাউন্ট রেজিস্ট্রেশন</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        openAuthModal('login');
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+                    >
+                      <LogIn className="w-4 h-4 text-slate-400" />
+                      <span>অন্য অ্যাকাউন্টে লগইন</span>
                     </button>
 
                     <div className="my-1 border-t border-slate-800/80 pt-1">
@@ -186,6 +233,19 @@ export const Navbar: React.FC = () => {
                           </span>
                         </button>
                       ))}
+                    </div>
+
+                    <div className="my-1 border-t border-slate-800/80 pt-1">
+                      <button
+                        onClick={() => {
+                          setShowUserMenu(false);
+                          userLogout();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-400 hover:bg-rose-500/10 transition font-semibold"
+                      >
+                        <LogOut className="w-4 h-4 text-rose-400" />
+                        <span>লগআউট (Logout)</span>
+                      </button>
                     </div>
                   </div>
                 )}

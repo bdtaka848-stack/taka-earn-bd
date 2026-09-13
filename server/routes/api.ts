@@ -54,31 +54,111 @@ router.get('/auth/me', (req, res) => {
 });
 
 router.post('/auth/login', (req, res) => {
-  const { username } = req.body;
-  if (!username) return res.status(400).json({ error: 'Username is required' });
+  const username = String(req.body.username || '').trim();
+  const password = String(req.body.password || '').trim();
+
+  if (!username) {
+    return res.status(400).json({ error: 'Admin Username প্রদান করা আবশ্যক।' });
+  }
+  if (!password) {
+    return res.status(400).json({ error: 'Admin Password প্রদান করা আবশ্যক।' });
+  }
+
   const user = db.getUserByUsername(username);
-  if (!user) return res.status(404).json({ error: 'User not found with this username' });
-  if (user.status === 'suspended') return res.status(403).json({ error: 'This account has been suspended by administration.' });
-  res.json({ user });
+  if (!user) {
+    return res.status(404).json({
+      error: 'এই Admin Username দিয়ে কোনো অ্যাকাউন্ট পাওয়া যায়নি। সঠিক ইউজারনেম দিন অথবা নতুন রেজিস্ট্রেশন করুন।',
+    });
+  }
+
+  if (user.status === 'suspended') {
+    return res.status(403).json({ error: 'আপনার অ্যাকাউন্টটি প্রশাসন কর্তৃক স্থগিত (Suspended) করা হয়েছে।' });
+  }
+
+  const userPassword = user.password || '123456';
+  if (userPassword !== password) {
+    return res.status(401).json({
+      error: 'ভুল Admin Password! সঠিক পাসওয়ার্ড দিয়ে পুনরায় চেষ্টা করুন (পাসওয়ার্ড ৬-১২ অক্ষরের হতে হবে)।',
+    });
+  }
+
+  res.json({ success: true, user, message: 'সফলভাবে লগইন হয়েছে!' });
 });
 
 router.post('/auth/register', (req, res) => {
-  const { username, name, email, phone, referralCode } = req.body;
-  if (!username || !name || !email || !phone) {
-    return res.status(400).json({ error: 'All registration fields are required' });
+  const username = String(req.body.username || '').trim();
+  const password = String(req.body.password || '').trim();
+  const name = String(req.body.name || '').trim();
+  const email = String(req.body.email || '').trim();
+  const phone = String(req.body.phone || '').trim();
+  const referralCode = req.body.referralCode ? String(req.body.referralCode).trim() : undefined;
+
+  // 1. Validate Admin Username (8 to 16 digits/numbers only)
+  if (!username) {
+    return res.status(400).json({ error: 'Admin Username পূরণ করা আবশ্যক।' });
+  }
+  if (!/^\d{8,16}$/.test(username)) {
+    return res.status(400).json({
+      error: 'Admin Username অপশনে শুধুমাত্র ৮ থেকে ১৬টি সংখ্যা (0-9) বসাতে পারবেন। অক্ষর বা স্পেস গ্রহণযোগ্য নয়। যেমন: 01712345678 বা 12345678',
+    });
+  }
+
+  // 2. Uniqueness check (No two users can have the same Username)
+  const existing = db.getUserByUsername(username);
+  if (existing) {
+    return res.status(400).json({
+      error: 'এই Admin Username টি ইতিমধ্যে নিবন্ধিত রয়েছে! প্রতিটি ব্যবহারকারীর আলাদা ইউনিক ইউজারনেম থাকতে হবে। অনুগ্রহ করে অন্য একটি সংখ্যা বা মোবাইল নম্বর দিন।',
+    });
+  }
+
+  // 3. Validate Admin Password (6 to 12 characters)
+  if (!password) {
+    return res.status(400).json({ error: 'Admin Password পূরণ করা আবশ্যক।' });
+  }
+  if (password.length < 6 || password.length > 12) {
+    return res.status(400).json({
+      error: 'Admin Password অবশ্যই ৬ থেকে ১২ সংখ্যার বা অক্ষরের মধ্যে হতে হবে।',
+    });
+  }
+
+  const newUser = db.createUser({
+    username,
+    password,
+    name: name || `User ${username.slice(-4)}`,
+    email: email || `${username}@takaearn.bd`,
+    phone: phone || username,
+    referredBy: referralCode,
+  });
+
+  res.status(201).json({
+    success: true,
+    user: newUser,
+    message: 'অভিনন্দন! আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে।',
+  });
+});
+
+router.get('/auth/check-username/:username', (req, res) => {
+  const username = String(req.params.username || '').trim();
+  if (!/^\d{8,16}$/.test(username)) {
+    return res.json({
+      valid: false,
+      available: false,
+      message: 'ইউজারনেমে শুধুমাত্র ৮ থেকে ১৬টি সংখ্যা হতে হবে।',
+    });
   }
   const existing = db.getUserByUsername(username);
   if (existing) {
-    return res.status(400).json({ error: 'Username is already taken' });
+    return res.json({
+      valid: true,
+      available: false,
+      message: 'এই ইউজারনেমটি ইতিমধ্যে নেওয়া হয়েছে। অন্য সংখ্যা দিন।',
+    });
   }
-  const newUser = db.createUser({
-    username,
-    name,
-    email,
-    phone,
-    referredBy: referralCode,
+  return res.json({
+    valid: true,
+    available: true,
+    message: 'এই ইউজারনেমটি উপলব্ধ আছে!',
   });
-  res.status(201).json({ user: newUser });
 });
 
 router.get('/auth/users-list', (req, res) => {

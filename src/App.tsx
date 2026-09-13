@@ -4,6 +4,7 @@ import { Navbar } from './components/common/Navbar.js';
 import { MobileNav } from './components/common/MobileNav.js';
 import { ToastContainer } from './components/common/Toast.js';
 import { AdminLoginModal } from './components/admin/AdminLoginModal.js';
+import { UserAuthModal } from './components/auth/UserAuthModal.js';
 import { UserDashboard } from './components/user/UserDashboard.js';
 import { TaskMarketplace } from './components/user/TaskMarketplace.js';
 import { WatchAdsSection } from './components/user/WatchAdsSection.js';
@@ -49,6 +50,9 @@ export default function App() {
 
       {/* Admin Login Dialog */}
       <AdminLoginModal />
+
+      {/* User Login & Registration Dialog */}
+      <UserAuthModal />
 
       {/* Top Navbar */}
       <Navbar />

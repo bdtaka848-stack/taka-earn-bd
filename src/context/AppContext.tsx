@@ -47,6 +47,16 @@ interface AppContextType {
   setUserView: (v: UserView) => void;
   refreshUser: () => Promise<void>;
   switchUser: (userId: string) => Promise<void>;
+  loginUser: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  registerUser: (formData: {
+    username: string;
+    password: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+    referralCode?: string;
+  }) => Promise<{ success: boolean; error?: string }>;
+  userLogout: () => void;
   allUsersList: Array<{ id: string; username: string; name: string; balance: number }>;
 
   // Settings
@@ -61,6 +71,11 @@ interface AppContextType {
   // Dialogs
   showAdminLoginModal: boolean;
   setShowAdminLoginModal: (show: boolean) => void;
+  showAuthModal: boolean;
+  setShowAuthModal: (show: boolean) => void;
+  authModalMode: 'login' | 'register';
+  setAuthModalMode: (mode: 'login' | 'register') => void;
+  openAuthModal: (mode?: 'login' | 'register') => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -72,6 +87,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
   const [adminView, setAdminView] = useState<AdminView>('dashboard');
   const [showAdminLoginModal, setShowAdminLoginModal] = useState<boolean>(false);
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
 
   const [user, setUser] = useState<User | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string>(() => {
@@ -81,6 +98,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [allUsersList, setAllUsersList] = useState<Array<{ id: string; username: string; name: string; balance: number }>>([]);
   const [publicSettings, setPublicSettings] = useState<Partial<SystemSettings> | null>(null);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  const openAuthModal = useCallback((mode: 'login' | 'register' = 'login') => {
+    setAuthModalMode(mode);
+    setShowAuthModal(true);
+  }, []);
 
   const addToast = useCallback((type: ToastMessage['type'], message: string, title?: string) => {
     const id = `toast_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
@@ -97,6 +119,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   const refreshUser = useCallback(async () => {
+    if (!currentUserId) {
+      setUser(null);
+      return;
+    }
     try {
       const res = await fetch('/api/auth/me', {
         headers: { 'x-user-id': currentUserId },
@@ -134,6 +160,68 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, []);
 
+  const loginUser = async (username: string, password: string) => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        return { success: false, error: data.error || 'লগইন ব্যর্থ হয়েছে।' };
+      }
+      setUser(data.user);
+      setCurrentUserId(data.user.id);
+      localStorage.setItem('taskbdt_current_user_id', data.user.id);
+      setShowAuthModal(false);
+      addToast('success', `স্বাগতম @${data.user.username}! সফলভাবে অ্যাকাউন্টে প্রবেশ করেছেন।`);
+      loadAllUsers();
+      return { success: true };
+    } catch {
+      return { success: false, error: 'সার্ভারের সাথে সংযোগ স্থাপন করা সম্ভব হয়নি।' };
+    }
+  };
+
+  const registerUser = async (formData: {
+    username: string;
+    password: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+    referralCode?: string;
+  }) => {
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        return { success: false, error: data.error || 'রেজিস্ট্রেশন ব্যর্থ হয়েছে।' };
+      }
+      setUser(data.user);
+      setCurrentUserId(data.user.id);
+      localStorage.setItem('taskbdt_current_user_id', data.user.id);
+      setShowAuthModal(false);
+      addToast('success', `অভিনন্দন! @${data.user.username} অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে।`);
+      loadAllUsers();
+      return { success: true };
+    } catch {
+      return { success: false, error: 'সার্ভারের সাথে সংযোগ স্থাপন করা সম্ভব হয়নি।' };
+    }
+  };
+
+  const userLogout = () => {
+    setUser(null);
+    setCurrentUserId('');
+    localStorage.removeItem('taskbdt_current_user_id');
+    addToast('info', 'আপনার অ্যাকাউন্ট থেকে সফলভাবে লগআউট করা হয়েছে।');
+    setAuthModalMode('login');
+    setShowAuthModal(true);
+  };
+
   const switchUser = async (userId: string) => {
     setCurrentUserId(userId);
     localStorage.setItem('taskbdt_current_user_id', userId);
@@ -144,7 +232,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (res.ok) {
         const data = await res.json();
         setUser(data.user);
-        addToast('info', `Switched active demo account to @${data.user.username}`);
+        addToast('info', `সক্রিয় অ্যাকাউন্ট পরিবর্তন হয়েছে: @${data.user.username}`);
       }
     } catch (e) {
       console.error(e);
@@ -187,6 +275,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setUserView,
         refreshUser,
         switchUser,
+        loginUser,
+        registerUser,
+        userLogout,
         allUsersList,
         publicSettings,
         refreshSettings,
@@ -195,6 +286,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         removeToast,
         showAdminLoginModal,
         setShowAdminLoginModal,
+        showAuthModal,
+        setShowAuthModal,
+        authModalMode,
+        setAuthModalMode,
+        openAuthModal,
       }}
     >
       {children}

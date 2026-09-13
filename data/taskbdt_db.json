@@ -1,6 +1,27 @@
 {
   "users": [
     {
+      "id": "usr_1789272979110_154",
+      "username": "01799887766",
+      "password": "mypassword",
+      "name": "User 7766",
+      "email": "01799887766@takaearn.bd",
+      "phone": "01799887766",
+      "avatarUrl": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80",
+      "balance": 0,
+      "totalEarned": 0,
+      "referralEarnings": 0,
+      "taskEarnings": 0,
+      "adEarnings": 0,
+      "spinEarnings": 0,
+      "referralCode": "BDT600012",
+      "referralsCount": 0,
+      "activeReferralsCount": 0,
+      "status": "active",
+      "createdAt": "2026-09-13T04:16:19.110Z",
+      "lastActive": "2026-09-13T04:16:19.110Z"
+    },
+    {
       "id": "usr_demo_1",
       "username": "sabbir_khan",
       "name": "Sabbir Hossain",
@@ -18,7 +39,8 @@
       "activeReferralsCount": 5,
       "status": "active",
       "createdAt": "2026-08-01T10:00:00.000Z",
-      "lastActive": "2026-09-12T08:22:17.047Z"
+      "lastActive": "2026-09-12T08:22:17.047Z",
+      "password": "123456"
     },
     {
       "id": "usr_tanvir_2",
@@ -39,7 +61,8 @@
       "activeReferralsCount": 1,
       "status": "active",
       "createdAt": "2026-08-15T12:30:00.000Z",
-      "lastActive": "2026-09-09T08:12:35.381Z"
+      "lastActive": "2026-09-09T08:12:35.381Z",
+      "password": "123456"
     },
     {
       "id": "usr_nusrat_3",
@@ -60,7 +83,8 @@
       "activeReferralsCount": 0,
       "status": "active",
       "createdAt": "2026-08-20T15:45:00.000Z",
-      "lastActive": "2026-09-09T08:12:35.381Z"
+      "lastActive": "2026-09-09T08:12:35.381Z",
+      "password": "123456"
     }
   ],
   "admins": [
@@ -667,7 +691,7 @@
       "rewardBdt": 5,
       "dailyLimit": 500,
       "enabled": true,
-      "viewsCount": 4892,
+      "viewsCount": 4890,
       "createdAt": "2026-08-05T00:00:00.000Z"
     }
   ],
