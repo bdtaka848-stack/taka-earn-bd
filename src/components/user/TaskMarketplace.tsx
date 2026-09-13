@@ -256,13 +256,21 @@ export const TaskMarketplace: React.FC = () => {
     setActiveSponsorModal(true);
   };
 
-  const handleNextProblem = () => {
+  const handleNextProblem = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     setActiveSponsorModal(false);
     setCompletedReward(null);
     startTimeRef.current = 0;
     generateNewProblem();
-  };
+  }, [generateNewProblem]);
+
+  // Close ad modal, claim 5 BDT reward if not yet claimed, and open next problem
+  const handleCloseAndClaim = useCallback(async () => {
+    if (completedReward === null && !isClaimingRef.current) {
+      await submitRewardClaim(Number(userAnswer), num1 + num2);
+    }
+    handleNextProblem();
+  }, [completedReward, submitRewardClaim, userAnswer, num1, num2, handleNextProblem]);
 
   const handleKeypadPress = (val: string) => {
     if (val === 'CLEAR') {
@@ -584,19 +592,54 @@ export const TaskMarketplace: React.FC = () => {
               {/* Modal Header */}
               <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className={`w-2.5 h-2.5 rounded-full ${secondsRemaining <= 0 || completedReward !== null ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}`} />
                   <span className="text-xs font-bold uppercase tracking-wider text-emerald-300">
-                    Math Task · ১৫ সেকেন্ড স্পন্সর বিরতি
+                    {secondsRemaining <= 0 || completedReward !== null ? '১৫ সেকেন্ড সম্পন্ন · [×] চাপুন' : 'Math Task · ১৫ সেকেন্ড স্পন্সর বিরতি'}
                   </span>
                 </div>
-                <button
-                  onClick={handleNextProblem}
-                  className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
-                  title="বন্ধ করুন"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+
+                {/* 15-Second Conditional Top [×] Close Button */}
+                {secondsRemaining > 0 && completedReward === null ? (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700 text-amber-300 text-xs font-mono font-bold">
+                    <Clock className="w-3.5 h-3.5 animate-spin text-amber-400" />
+                    <span>{secondsRemaining}s পর [×] আসবে</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <motion.button
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+                      onClick={handleCloseAndClaim}
+                      className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-black text-xs shadow-lg shadow-emerald-950/80 border border-emerald-300 flex items-center gap-1.5 animate-bounce cursor-pointer"
+                      title="বিজ্ঞাপন কেটে ৫ টাকা নিন"
+                    >
+                      <div className="w-5 h-5 rounded-md bg-white/20 flex items-center justify-center font-black text-sm">
+                        <X className="w-3.5 h-3.5 stroke-[3]" />
+                      </div>
+                      <span>[ × ] কেটে ৫ টাকা নিন</span>
+                    </motion.button>
+                    <button
+                      onClick={handleCloseAndClaim}
+                      className="w-8 h-8 rounded-full bg-rose-500 hover:bg-rose-400 text-white flex items-center justify-center font-black shadow-md border-2 border-white/60 transition cursor-pointer hover:scale-110 active:scale-95"
+                      title="বিজ্ঞাপন কেটে দিন ও ৫ টাকা নিন"
+                    >
+                      <X className="w-4 h-4 stroke-[3]" />
+                    </button>
+                  </div>
+                )}
               </div>
+
+              {/* 15-Second Done Notification Bar */}
+              {(secondsRemaining <= 0 || completedReward !== null) && (
+                <div className="p-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center justify-between animate-pulse mb-3">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>১৫ সেকেন্ড সম্পন্ন! ওপরে <strong>[×]</strong> চাপ দিয়ে ৫ টাকা গ্রহণ করে পরবর্তী অংক শুরু করুন।</span>
+                  </div>
+                  <span className="font-mono text-emerald-300 font-black shrink-0 text-sm">+৳৫.০০</span>
+                </div>
+              )}
 
               {/* Countdown Progress Bar */}
               <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden mb-5 border border-slate-800">
@@ -656,34 +699,35 @@ export const TaskMarketplace: React.FC = () => {
               {/* Action Buttons */}
               {completedReward !== null ? (
                 <div className="space-y-2">
+                  <button
+                    onClick={handleCloseAndClaim}
+                    className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-black text-sm shadow-xl flex items-center justify-center gap-2 transition cursor-pointer"
+                  >
+                    <X className="w-5 h-5 stroke-[3]" />
+                    <span>[ × ] কেটে পরবর্তী অংক শুরু করুন (অবশিষ্ট {status.remaining} টি)</span>
+                  </button>
+
                   {status.remaining > 0 ? (
                     <button
-                      onClick={handleNextProblem}
-                      className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-black text-sm shadow-lg shadow-emerald-950/60 flex items-center justify-center gap-2 transition cursor-pointer"
+                      onClick={handleCloseAndClaim}
+                      className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer"
                     >
-                      <Plus className="w-4 h-4" />
-                      <span>পরবর্তী অংক করুন (+৳৫.০০) · {status.remaining}টি বাকি</span>
+                      <Plus className="w-4 h-4 text-emerald-400" />
+                      <span>নতুন অংক পেইজে যান (+৳৫.০০)</span>
                     </button>
                   ) : (
                     <div className="p-3 rounded-xl bg-slate-950 text-center text-xs font-bold text-amber-300 border border-slate-800">
-                      আজকের ৫০০টি অংক কাজ সম্পূর্ণ হয়েছে!
+                      আজকের ৫০০টি অংক কাজ সম্পূর্ণ হয়েছে! অন্য কাজ করুন।
                     </div>
                   )}
-
-                  <button
-                    onClick={handleNextProblem}
-                    className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition cursor-pointer"
-                  >
-                    বন্ধ করুন (Close)
-                  </button>
                 </div>
               ) : (
                 <div className="space-y-2">
                   {secondsRemaining <= 0 ? (
                     <button
-                      onClick={() => submitRewardClaim(Number(userAnswer), num1 + num2)}
+                      onClick={handleCloseAndClaim}
                       disabled={isSubmitting}
-                      className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm shadow-lg flex items-center justify-center gap-2 transition cursor-pointer"
+                      className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-black text-sm shadow-lg flex items-center justify-center gap-2 transition cursor-pointer animate-bounce"
                     >
                       {isSubmitting ? (
                         <>
@@ -692,15 +736,15 @@ export const TaskMarketplace: React.FC = () => {
                         </>
                       ) : (
                         <>
-                          <Sparkles className="w-4 h-4" />
-                          <span>রিওয়ার্ড ক্লেইম করুন (+৳৫.০০)</span>
+                          <X className="w-5 h-5 stroke-[3]" />
+                          <span>[ × ] কেটে দিন এবং ৫ টাকা গ্রহণ করুন</span>
                         </>
                       )}
                     </button>
                   ) : (
                     <div className="text-center text-[11px] text-slate-400 p-2 rounded-xl bg-slate-950/80 border border-slate-800/80">
                       <Shield className="w-3.5 h-3.5 inline mr-1 text-emerald-400" />
-                      স্পন্সর উইন্ডো দেখুন। ১৫ সেকেন্ড পূর্ণ হলে স্বয়ংক্রিয়ভাবে ৫.০০ টাকা ওয়ালেটে যুক্ত হবে।
+                      স্পন্সর উইন্ডো দেখুন। ১৫ সেকেন্ড পূর্ণ হলে ওপরে [×] কেটে দেওয়ার বাটন আসবে।
                     </div>
                   )}
                 </div>

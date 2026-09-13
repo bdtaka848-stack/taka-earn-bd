@@ -515,12 +515,12 @@ function getInitialData(): DatabaseSchema {
     requireAdBetweenSpins: true,
     adDurationSeconds: 15,
     slices: [
-      { label: '৳ 5', rewardBdt: 5, probability: 35, color: '#3b82f6', textColor: '#ffffff' },
-      { label: '৳ 10', rewardBdt: 10, probability: 25, color: '#10b981', textColor: '#ffffff' },
-      { label: '৳ 2', rewardBdt: 2, probability: 20, color: '#f59e0b', textColor: '#ffffff' },
-      { label: '৳ 25', rewardBdt: 25, probability: 10, color: '#8b5cf6', textColor: '#ffffff' },
-      { label: '৳ 50', rewardBdt: 50, probability: 7, color: '#ec4899', textColor: '#ffffff' },
-      { label: '৳ 100 🏆', rewardBdt: 100, probability: 3, color: '#ef4444', textColor: '#ffffff' },
+      { label: '৳ 5', rewardBdt: 5, probability: 100, color: '#10b981', textColor: '#ffffff' },
+      { label: '৳ 5', rewardBdt: 5, probability: 100, color: '#3b82f6', textColor: '#ffffff' },
+      { label: '৳ 5', rewardBdt: 5, probability: 100, color: '#8b5cf6', textColor: '#ffffff' },
+      { label: '৳ 5', rewardBdt: 5, probability: 100, color: '#f59e0b', textColor: '#ffffff' },
+      { label: '৳ 5', rewardBdt: 5, probability: 100, color: '#06b6d4', textColor: '#ffffff' },
+      { label: '৳ 5', rewardBdt: 5, probability: 100, color: '#ec4899', textColor: '#ffffff' },
     ],
   };
 
@@ -639,14 +639,10 @@ class DatabaseManager {
           },
           spinSettings: {
             ...initial.spinSettings,
-            ...(parsed.spinSettings || {}),
-            dailyLimit: (parsed.spinSettings?.dailyLimit && parsed.spinSettings.dailyLimit >= 500)
-              ? parsed.spinSettings.dailyLimit
-              : 500,
-            requireAdBetweenSpins: parsed.spinSettings?.requireAdBetweenSpins !== undefined
-              ? parsed.spinSettings.requireAdBetweenSpins
-              : true,
-            adDurationSeconds: parsed.spinSettings?.adDurationSeconds || 15,
+            dailyLimit: 500,
+            requireAdBetweenSpins: true,
+            adDurationSeconds: 15,
+            slices: initial.spinSettings.slices,
           },
           spinResults: parsed.spinResults || initial.spinResults,
           advertisements: (() => {
@@ -1375,7 +1371,7 @@ class DatabaseManager {
     const elapsedMs = Date.now() - session.startedAt;
     const requiredMs = session.durationMs;
 
-    if (elapsedMs < (requiredMs - 300)) {
+    if (elapsedMs < (requiredMs - 1500)) {
       activeAdWatchSessions.delete(sessionId);
       return {
         success: false,

@@ -15,8 +15,10 @@ import {
   Flame,
   Volume2,
   VolumeX,
+  X,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { openAdsterraSmartlink, ADSTERRA_SMARTLINK_URL } from '../../utils/constants.js';
 
 export const SpinWheelSection: React.FC = () => {
   const { addToast, refreshUser, user } = useApp();
@@ -86,6 +88,7 @@ export const SpinWheelSection: React.FC = () => {
     if (adTimerRef.current) {
       clearInterval(adTimerRef.current);
     }
+    openAdsterraSmartlink();
     setAdSecondsRemaining(duration);
     setAdCompleted(false);
     setShowAdModal(true);
@@ -105,17 +108,19 @@ export const SpinWheelSection: React.FC = () => {
     }, 1000);
   }, []);
 
-  const handleCloseAdModal = () => {
-    if (!adCompleted) {
+  const handleCloseAdModal = useCallback(async () => {
+    if (!adCompleted && adSecondsRemaining > 0) {
       addToast('error', 'পরবর্তী স্পিন আনলক করতে সম্পূর্ণ ১৫ সেকেন্ড বিজ্ঞাপনটি দেখুন।');
       return;
     }
     if (adTimerRef.current) {
       clearInterval(adTimerRef.current);
+      adTimerRef.current = null;
     }
     setShowAdModal(false);
-    addToast('success', 'বিজ্ঞাপন সম্পন্ন হয়েছে! আপনি এখন পরবর্তী স্পিন করতে পারবেন।');
-  };
+    await refreshUser();
+    addToast('success', '🎉 অভিনন্দন! ১৫ সেকেন্ড বিজ্ঞাপন সম্পূর্ণ করায় +৳৫.০০ মূল ব্যালেন্সে যুক্ত হয়েছে! পরবর্তী স্পিন করুন।');
+  }, [adCompleted, adSecondsRemaining, refreshUser, addToast]);
 
   const handleSpin = async () => {
     if (isSpinning || spinsRemaining <= 0 || !enabled || showAdModal) return;
@@ -495,30 +500,74 @@ export const SpinWheelSection: React.FC = () => {
               {/* Top Ad Header */}
               <div className="px-6 py-4 bg-gradient-to-r from-slate-950 via-amber-950/30 to-slate-950 border-b border-slate-800 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center">
-                    <Clock className="w-4 h-4 animate-spin" />
+                  <div className={`w-8 h-8 rounded-xl ${adCompleted ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'} flex items-center justify-center`}>
+                    {adCompleted ? <Sparkles className="w-4 h-4 text-emerald-400" /> : <Clock className="w-4 h-4 animate-spin" />}
                   </div>
                   <div>
                     <h3 className="text-sm font-black text-white flex items-center gap-2">
                       <span>স্পন্সর বিজ্ঞাপন (Sponsor Ad)</span>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">
-                        ১ Spin বিরতি
+                        {adCompleted ? '১৫ সেকেন্ড সম্পন্ন' : '১ Spin বিরতি'}
                       </span>
                     </h3>
                     <p className="text-[11px] text-slate-400">
-                      ১৫ সেকেন্ড বিজ্ঞাপন দেখার পর পরবর্তী স্পিন আনলক হবে
+                      {adCompleted ? 'ওপরে [×] কেটে ৫ টাকা নিয়ে পরবর্তী স্পিন করুন' : '১৫ সেকেন্ড বিজ্ঞাপন দেখার পর ওপরে [×] বাটন আসবে'}
                     </p>
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setIsMuted(!isMuted)}
-                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition"
-                  title={isMuted ? 'Unmute' : 'Mute'}
-                >
-                  {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setIsMuted(!isMuted)}
+                    className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition"
+                    title={isMuted ? 'Unmute' : 'Mute'}
+                  >
+                    {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                  </button>
+
+                  {/* 15-Second Conditional Top [×] Close Button */}
+                  {adSecondsRemaining > 0 && !adCompleted ? (
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700 text-amber-300 text-xs font-mono font-bold">
+                      <Clock className="w-3.5 h-3.5 animate-spin text-amber-400" />
+                      <span>{adSecondsRemaining}s পর [×] আসবে</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <motion.button
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+                        onClick={handleCloseAdModal}
+                        className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-black text-xs shadow-lg shadow-emerald-950/80 border border-emerald-300 flex items-center gap-1.5 animate-bounce cursor-pointer"
+                        title="বিজ্ঞাপন কেটে ৫ টাকা নিন"
+                      >
+                        <div className="w-5 h-5 rounded-md bg-white/20 flex items-center justify-center font-black text-sm">
+                          <X className="w-3.5 h-3.5 stroke-[3]" />
+                        </div>
+                        <span>[ × ] কেটে ৫ টাকা নিন</span>
+                      </motion.button>
+                      <button
+                        onClick={handleCloseAdModal}
+                        className="w-8 h-8 rounded-full bg-rose-500 hover:bg-rose-400 text-white flex items-center justify-center font-black shadow-md border-2 border-white/60 transition cursor-pointer hover:scale-110 active:scale-95"
+                        title="বিজ্ঞাপন কেটে দিন ও ৫ টাকা নিন"
+                      >
+                        <X className="w-4 h-4 stroke-[3]" />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* 15-Second Done Notification Bar */}
+              {(adCompleted || adSecondsRemaining <= 0) && (
+                <div className="mx-6 mt-4 p-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center justify-between animate-pulse">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>১৫ সেকেন্ড সম্পন্ন! ওপরে <strong>[×]</strong> চাপ দিয়ে ৫ টাকা নিয়ে নতুন স্পিন করুন।</span>
+                  </div>
+                  <span className="font-mono text-emerald-300 font-black shrink-0 text-sm">+৳৫.০০</span>
+                </div>
+              )}
 
               {/* Countdown Progress Bar */}
               <div className="w-full bg-slate-950 h-2 relative overflow-hidden">
@@ -598,8 +647,8 @@ export const SpinWheelSection: React.FC = () => {
                       onClick={handleCloseAdModal}
                       className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-black text-sm shadow-xl shadow-emerald-950/60 flex items-center justify-center gap-2 transition animate-bounce cursor-pointer"
                     >
-                      <RotateCw className="w-5 h-5" />
-                      <span>পরবর্তী স্পিন করুন (Start Next Spin)</span>
+                      <X className="w-5 h-5 stroke-[3]" />
+                      <span>[ × ] কেটে নতুন স্পিন করুন (+৳৫.০০) · {spinsRemaining}টি বাকি</span>
                     </button>
                   ) : (
                     <button
